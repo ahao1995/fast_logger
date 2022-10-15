@@ -97,8 +97,8 @@ class stra_logger
         std::lock_guard<std::mutex> lock(register_mutex);
         if (log_id != UNASSIGNED_LOGID)
             return;
-        char *p  = static_cast<char *>(malloc(1024));
-        info.create_fragments(&p);
+        char *p = static_cast<char *>(malloc(1024));
+        info.create_log_fragments(&p);
         log_id = static_cast<int32_t>(log_infos_.size()) + static_cast<int32_t>(log_handler_.get_log_infos_cnt());
         log_infos_.emplace_back(info);
     }
@@ -135,7 +135,6 @@ class stra_logger
     TSCNS          &tscns_;
     log_handler     log_handler_;
 };
-
 #define STRA_LOG(stra_logger, level, format, ...)                                                                                                    \
     do {                                                                                                                                             \
         static int log_id = UNASSIGNED_LOGID;                                                                                                        \

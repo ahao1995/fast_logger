@@ -5,7 +5,6 @@
 #include <string.h>
 #include <sys/syscall.h>
 #include <unistd.h>
-
 class staging_buffer
 {
   public:

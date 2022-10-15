@@ -39,9 +39,11 @@ class log_handler
         bg_log_infos_.push_back(info);
     }
     template <typename T>
-    int handle_single_arg(char *output, const char *formatString, T arg, uint32_t &data_size)
+    int handle_single_arg(char *output, const char *formatString, T arg, uint32_t data_size)
     {
-        data_size = sizeof(T);
+        if (data_size != sizeof(T)) {
+            return sprintf(output, " [error arg] ");
+        }
         return sprintf(output, formatString, arg);
     }
     void handle_log(const char *name, const staging_buffer::queue_header *header)
@@ -70,11 +72,12 @@ class log_handler
         }
         char *output  = output_buf;
         int   log_len = 0;
-        log_len += sprintf(output, "[%s] %s %03d:%03d %s:%d: ", name, time_buf_, ms, us, log_level, info.line_num);
+        log_len += sprintf(output, "[%s] [%s %03d.%03d] [%s] ", name, time_buf_, ms, us, log_level);
         output             = output_buf + log_len;
         print_fragment *pf = reinterpret_cast<print_fragment *>(info.fragments);
         for (int i = 0; i < info.num_print_fragments; ++i) {
-            uint32_t data_size = 0;
+            uint32_t data_size = *(uint32_t *)(argData);
+            argData += sizeof(uint32_t);
             switch (pf->arg_type) {
                 case NONE:
 #pragma GCC diagnostic push
@@ -140,8 +143,6 @@ class log_handler
                     log_len += handle_single_arg(output, pf->format_fragment, *(const void **)argData, data_size);
                     break;
                 case const_char_ptr_t: {
-                    data_size = *(uint32_t *)(argData);
-                    argData += sizeof(uint32_t);
                     char buf[data_size + 1];
                     memcpy(buf, argData, data_size);
                     buf[data_size] = '\0';

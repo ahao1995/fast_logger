@@ -1,7 +1,6 @@
 #pragma once
 #include <stdint.h>
 static constexpr int UNASSIGNED_LOGID = -1;
-
 enum log_level : uint8_t
 {
     TRACE = 0,

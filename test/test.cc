@@ -1,6 +1,6 @@
-#include "../logger.h"
-#include "../stra_logger.h"
-#include "../tscns.h"
+#include "fast_logger.h"
+#include "stra_logger.h"
+#include "tscns.h"
 #include <sys/time.h>
 
 inline static uint64_t get_current_nano_sec()
@@ -35,7 +35,7 @@ int main()
     STRA_LOG(log_2, DEBUG, "%d %d %s %.1lf", 10, 111, "test2", 1.020215);
     log_2->poll();
 
-    FAST_LOG(DEBUG, "%d %d", 5, 10);
+    FAST_LOG(DEBUG, "%d %d", 5, 5);
     fast_logger::get_logger().poll();
 
     auto t0 = get_current_nano_sec();
